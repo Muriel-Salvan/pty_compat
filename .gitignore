@@ -1,0 +1,8 @@
+# This repo builds a Rubygem. No lock file then.
+Gemfile.lock
+
+# On some platforms (Windows), node-pty is used to execute the CLI.
+# Don't commit node package files and modules.
+node_modules
+package.json
+package-lock.json
