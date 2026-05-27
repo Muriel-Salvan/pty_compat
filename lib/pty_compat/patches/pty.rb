@@ -1,3 +1,15 @@
+require 'English'
+
+# Augment PTY module with last_status
+module PTY
+  # @return [Process::Status] Last process status
+  #   Use this instead of $? as some workaround methods don't set $? properly and we can't modify this variable.
+  def last_status
+    # Default implementation
+    $CHILD_STATUS
+  end
+end
+
 begin
   require 'pty'
 rescue LoadError => e

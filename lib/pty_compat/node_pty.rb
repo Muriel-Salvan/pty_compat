@@ -18,11 +18,19 @@ module PtyCompat
     def spawn(cmd)
       node_cmd = ['node', "#{__dir__}/assets/node_pty_bridge.js"] + cmd.split
       if block_given?
-        Open3.popen3(*node_cmd) { |*args| yield popen3_to_pty(*args) }
+        Open3.popen3(*node_cmd) do |stdin, stdout, stderr, wait_thr|
+          @last_status = wait_thr.value
+          yield popen3_to_pty(stdin, stdout, stderr, wait_thr)
+        end
       else
-        popen3_to_pty(*Open3.popen3(*node_cmd))
+        stdin, stdout, stderr, wait_thr = Open3.popen3(*node_cmd)
+        @last_status = wait_thr.value
+        popen3_to_pty(stdin, stdout, stderr, wait_thr)
       end
     end
+
+    # @return [Process::Status] Last process status
+    attr_reader :last_status
 
     private
 
