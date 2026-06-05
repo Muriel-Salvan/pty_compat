@@ -6,7 +6,7 @@ module PtyCompat
   module NodePty
     # Spawn a command in a PTY and return or yield its outputs, input and pid
     #
-    # @param cmd [String] The command to execute
+    # @param args [Array] The command arguments to execute (see ::PTY#spawn)
     # @yield An optional code called with all PTY outputs, input and PID.
     # @yieldparam r [IO] The reader output (containing stdout and stderr).
     # @yieldparam w [IO] The writer input (containing stdin).
@@ -15,22 +15,25 @@ module PtyCompat
     #   - r [IO] The reader output (containing stdout and stderr).
     #   - w [IO] The writer input (containing stdin).
     #   - pid [Integer] The process PID.
-    def spawn(cmd)
-      node_cmd = ['node', "#{__dir__}/assets/node_pty_bridge.js"] + cmd.split
+    def spawn(*args)
+      env, cmd = args.first.is_a?(Hash) ? [[args.first], args[1..]] : [[], args]
+      node_args = env + ['node', "#{__dir__}/assets/node_pty_bridge.js"] + cmd
       if block_given?
-        Open3.popen3(*node_cmd) do |stdin, stdout, stderr, wait_thr|
-          @last_status = wait_thr.value
+        Open3.popen3(*node_args) do |stdin, stdout, stderr, wait_thr|
+          @last_wait_thr = wait_thr
           yield popen3_to_pty(stdin, stdout, stderr, wait_thr)
         end
       else
-        stdin, stdout, stderr, wait_thr = Open3.popen3(*node_cmd)
-        @last_status = wait_thr.value
+        stdin, stdout, stderr, wait_thr = Open3.popen3(*node_args)
+        @last_wait_thr = wait_thr
         popen3_to_pty(stdin, stdout, stderr, wait_thr)
       end
     end
 
     # @return [Process::Status] Last process status
-    attr_reader :last_status
+    def last_status
+      @last_wait_thr.value
+    end
 
     private
 
