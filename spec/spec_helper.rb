@@ -57,6 +57,25 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
+  # Force our PTY wrapper to be loaded, even if PTY already existed.
+  config.around do |example|
+    original_pty = nil
+    if Object.const_defined?(:PTY)
+      original_pty = PTY
+      Object.send(:remove_const, :PTY)
+    end
+    # Make sure thread exceptions are not output in stdout for this test, as they are expected and mess up tests output.
+    original_report_on_exception = Thread.report_on_exception
+    Thread.report_on_exception = false
+    begin
+      example.run
+    ensure
+      Thread.report_on_exception = original_report_on_exception
+      Object.send(:remove_const, :PTY) if Object.const_defined?(:PTY)
+      Object.const_set(:PTY, original_pty) if original_pty
+    end
+  end
+
   # The settings below are suggested to provide a good initial experience
   # with RSpec, but feel free to customize to your heart's content.
   #   # This allows you to limit a spec run to individual examples or groups

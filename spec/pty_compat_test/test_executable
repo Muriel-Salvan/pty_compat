@@ -1,0 +1,11 @@
+# Test executable for PTY.spawn testing.
+# Writes to stdout, stderr, exits with code 42.
+
+STDOUT.sync = true
+STDERR.sync = true
+
+$stdout.puts 'STDOUT: Hello from stdout'
+$stderr.puts 'STDERR: Hello from stderr' unless ARGV.include?('nostderr')
+$stdout.puts "STDIN: #{$stdin.readpartial(4096)}" if ARGV.include?('stdin')
+
+exit 42

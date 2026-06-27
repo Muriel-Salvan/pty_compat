@@ -71,6 +71,12 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Max: 5
 
+RSpec/RemoveConst:
+  Exclude:
+  # We can't use stub_const or hide_const, because we need to remove it so that the test itself redefines it.
+  # Using RSpec's mocking framework would prevent the new one to be used.
+  - spec/spec_helper.rb
+
 # I don't want to pollute my code with something that should be integrated in the language
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never

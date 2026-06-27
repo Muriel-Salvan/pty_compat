@@ -48,6 +48,9 @@ module PtyCompat
     #   - w [IO] The writer input (containing stdin).
     #   - pid [Integer] The process PID.
     def popen3_to_pty(stdin, stdout, stderr, wait_thread)
+      stdout.set_encoding(Encoding::UTF_8)
+      stderr.set_encoding(Encoding::UTF_8)
+      stdin.set_encoding(Encoding::UTF_8)
       # Create a pipe to combine stdout and stderr into a single IO
       combined_r, combined_w = IO.pipe
       # Reader thread for stdout
