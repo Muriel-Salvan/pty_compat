@@ -4,9 +4,11 @@ module PtyCompat
   # Provide a similar interface as the PTY one that could work on platforms that don't support PTY (for example Windows).
   # Internally uses NodeJS's node-pty.
   module NodePty
+    # @!group Public API
+
     # Spawn a command in a PTY and return or yield its outputs, input and pid
     #
-    # @param args [Array] The command arguments to execute (see ::PTY#spawn)
+    # @param args [Array] The command arguments to execute (see [`::PTY#spawn`](https://www.rubydoc.info/stdlib/pty/PTY%2Espawn))
     # @yield An optional code called with all PTY outputs, input and PID.
     # @yieldparam r [IO] The reader output (containing stdout and stderr).
     # @yieldparam w [IO] The writer input (containing stdin).

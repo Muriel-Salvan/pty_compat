@@ -2,7 +2,9 @@ require 'English'
 
 # Augment PTY module with last_status
 module PTY
-  # @return [Process::Status] Last process status
+  # @!group Public API
+
+  # @return [Process::Status] Last process status.
   #   Use this instead of $? as some workaround methods don't set $? properly and we can't modify this variable.
   def self.last_status
     # Default implementation
