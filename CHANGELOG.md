@@ -1,3 +1,9 @@
+# [v2.0.0](https://github.com/Muriel-Salvan/pty_compat/compare/v1.0.0...v2.0.0) (2026-07-01 08:19:49)
+
+### Breaking changes
+
+* [[breaking] refactor!: replace `PTY.last_status` with `Process::Status.wait`](https://github.com/Muriel-Salvan/pty_compat/commit/eb0a772a4576e24a4b269525472d5a596913f0c8)
+
 # [v1.0.0](https://github.com/Muriel-Salvan/pty_compat/compare/...v0.0.1) (2026-06-29 12:55:30)
 
 ### Patches
