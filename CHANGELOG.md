@@ -1,3 +1,9 @@
+# [v2.0.1](https://github.com/Muriel-Salvan/pty_compat/compare/v2.0.0...v2.0.1) (2026-07-01 15:43:51)
+
+### Patches
+
+* [ci: add Codecov coverage reporting to CI pipeline](https://github.com/Muriel-Salvan/pty_compat/commit/5d25edbd834d1d2164057932ce9c00033b4a63f5)
+
 # [v2.0.0](https://github.com/Muriel-Salvan/pty_compat/compare/v1.0.0...v2.0.0) (2026-07-01 08:19:49)
 
 ### Breaking changes
