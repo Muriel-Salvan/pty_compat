@@ -2,6 +2,8 @@ require 'simplecov'
 SimpleCov.start do
   minimum_coverage 90
 end
+require 'simplecov-cobertura'
+SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
 
 module PtyCompatTest
   class << self
