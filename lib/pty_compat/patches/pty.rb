@@ -1,17 +1,5 @@
 require 'English'
 
-# Augment PTY module with last_status
-module PTY
-  # @!group Public API
-
-  # @return [Process::Status] Last process status.
-  #   Use this instead of $? as some workaround methods don't set $? properly and we can't modify this variable.
-  def self.last_status
-    # Default implementation
-    $CHILD_STATUS
-  end
-end
-
 begin
   require 'pty'
 rescue LoadError => e
@@ -20,6 +8,15 @@ rescue LoadError => e
       class << self
         # Fallback on node-pty
         prepend PtyCompat::NodePty
+      end
+    end
+
+    module Process
+      class Status
+        class << self
+          # Fallback on getting process status from POpen3
+          prepend PtyCompat::ProcessStatusFromPopen3
+        end
       end
     end
   end

@@ -73,7 +73,7 @@ PTY.spawn('ping', '-c', '3', 'example.com') do |reader, writer, pid|
 end
 
 # Retrieve the exit status portably
-status = PTY.last_status
+status = Process::Status.wait
 ```
 
 ## Requirements
@@ -84,7 +84,7 @@ status = PTY.last_status
 ## Features
 
 - **Zero-config drop-in.** A single `require` replaces `PTY.spawn` on Windows — no configuration, no platform checks, no conditional logic.
-- **Portable exit status.** Use `PTY.last_status` to retrieve the exit code on any platform instead of relying on `$?`.
+- **Portable exit status.** Use `Process::Status.wait` to retrieve the exit code on any platform.
 - **Non-block & block forms.** Supports both `PTY.spawn(command, args...) -> [reader, writer, pid]` and `PTY.spawn(command, args...) { |reader, writer, pid| ... }` forms.
 - **Windows support.** Leverages Microsoft's [`node-pty`](https://github.com/microsoft/node-pty) to provide a proper PTY on Windows, where Ruby's native `PTY` is unavailable.
 - **Lightweight.** The Ruby codebase is minimal, delegating the heavy lifting to a well-maintained native module.
@@ -113,16 +113,16 @@ Spawns a new process attached to a pseudo-terminal.
 
 **Block form** yields `reader`, `writer`, and `pid` to the given block, and automatically closes the IOs after the block returns.
 
-### `PTY.last_status -> Process::Status | nil`
+### `Process::Status.wait -> Process::Status | nil`
 
 Returns the exit status of the last spawned process.
 
-- On platforms with native `PTY`, mirrors `$?`.
+- On platforms with native `PTY`, uses the default `Process::Status.wait`.
 - On the fallback path, returns a `Process::Status` constructed from the exit code captured by the `node-pty` bridge.
 - Returns `nil` if no process has been spawned yet or if the last spawn failed.
 
 > [!TIP]
-> Prefer `PTY.last_status` over `$?` for portable code that runs on both Windows and Unix.
+> Use `Process::Status.wait` for portable code that runs on both Windows and Unix.
 
 ## Documentation
 
@@ -148,10 +148,6 @@ Returns the exit status of the last spawned process.
                                               │   process)   │
                                               └──────────────┘
 ```
-
-### `PTY.last_status`
-
-On platforms with native `PTY`, `PTY.last_status` returns `$?` (`Process::Status`). On the fallback path, the bridge captures the exit code and exposes it through the same method. Prefer this over `$?` for portable code.
 
 ### Why not a pure Ruby PTY?
 

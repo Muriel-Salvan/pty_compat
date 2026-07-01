@@ -3,11 +3,31 @@ SimpleCov.start do
   minimum_coverage 90
 end
 
+module PtyCompatTest
+  class << self
+    # Capture the virgen state of the classes that we will modify when requiring pty_compat.
+    # This will ensure that this state can be reset before each test case.
+    def capture_classes_state
+      @original_process_status = nil
+      @original_process_status = Process::Status.clone if Process.const_defined?(:Status)
+      @original_pty = nil
+      @original_pty = PTY.clone if Object.const_defined?(:PTY)
+    end
+
+    # Reset the classes to the virgen state.
+    def reset_classes_state
+      Process.send(:remove_const, :Status) if Process.const_defined?(:Status)
+      Process.const_set(:Status, @original_process_status.clone) if @original_process_status
+      Object.send(:remove_const, :PTY) if Object.const_defined?(:PTY)
+      Object.const_set(:PTY, @original_pty.clone) if @original_pty
+    end
+  end
+end
+# Save the current PTY and Process::Status constants as they will be reset before each test case
+PtyCompatTest.capture_classes_state
+
 require 'pty_compat'
 require 'zeitwerk'
-
-module PtyCompatTest
-end
 
 spec_loader = Zeitwerk::Loader.new
 spec_loader.push_dir('spec/pty_compat_test', namespace: PtyCompatTest)
@@ -64,11 +84,7 @@ RSpec.configure do |config|
 
   # Force our PTY wrapper to be loaded, even if PTY already existed.
   config.around do |example|
-    original_pty = nil
-    if Object.const_defined?(:PTY)
-      original_pty = PTY
-      Object.send(:remove_const, :PTY)
-    end
+    PtyCompatTest.reset_classes_state
     # Make sure thread exceptions are not output in stdout for this test, as they are expected and mess up tests output.
     original_report_on_exception = Thread.report_on_exception
     Thread.report_on_exception = false
@@ -76,8 +92,6 @@ RSpec.configure do |config|
       example.run
     ensure
       Thread.report_on_exception = original_report_on_exception
-      Object.send(:remove_const, :PTY) if Object.const_defined?(:PTY)
-      Object.const_set(:PTY, original_pty) if original_pty
     end
   end
 

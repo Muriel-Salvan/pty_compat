@@ -5,7 +5,7 @@ STDOUT.sync = true
 STDERR.sync = true
 
 $stdout.puts 'STDOUT: Hello from stdout'
-$stderr.puts 'STDERR: Hello from stderr' unless ARGV.include?('nostderr')
+$stderr.puts 'STDERR: Hello from stderr'
 $stdout.puts "STDIN: #{$stdin.readpartial(4096)}" if ARGV.include?('stdin')
 
 exit 42

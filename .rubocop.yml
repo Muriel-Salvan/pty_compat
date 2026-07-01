@@ -60,6 +60,13 @@ RSpec/DescribeClass:
     - 'spec/scenarios/documentation_spec.rb'
     - 'spec/scenarios/packaging_spec.rb'
 
+# Don't use describe_Class on purpose on these files as RSpec is caching its value between test cases
+#   but we need Process::Status to be overwritten (in the around block) to make sure different mixins
+#   are being used in different test cases.
+RSpec/DescribedClass:
+  Exclude:
+    - 'spec/scenarios/process/status/wait_spec.rb'
+
 # It's ok to have scenarios having multiple lines
 RSpec/ExampleLength:
   Max: 140

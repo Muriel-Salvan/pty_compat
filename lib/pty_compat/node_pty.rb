@@ -32,10 +32,10 @@ module PtyCompat
       end
     end
 
-    # @return [Process::Status] Last process status
-    def last_status
-      @last_wait_thr.value
-    end
+    # @!group Internal
+
+    # @return [Process::Waiter] The last process waiter
+    attr_reader :last_wait_thr
 
     private
 

@@ -14,7 +14,7 @@ RSpec.describe 'Documentation generation' do
   end
 
   it 'reports 100% of documented code' do
-    stdout = `bundle exec yard stats --list-undoc`
+    stdout = `bundle exec yard stats --list-undoc --fail-on-warning`
     expect($CHILD_STATUS.exitstatus).to eq(0)
     expect(stdout).to include('100.00% documented')
   end
